@@ -1,0 +1,10 @@
+Django==5.0.2
+djangorestframework==3.16.1
+django-cors-headers==4.7.0
+django-modeltranslation==0.19.16
+django-ckeditor==6.7.3
+python-decouple==3.8
+Pillow==10.0.1
+django-filter==24.1
+django-js-asset==3.1.2
+
