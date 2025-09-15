@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block title %}Annonces - AutoPlatform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-center mb-3">
+                <i class="fas fa-tags"></i> Annonces de Voitures
+            </h1>
+            <p class="text-center text-muted">Découvrez nos annonces de vente et location de véhicules</p>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="search-section mb-4">
+        <form method="get" class="row g-3">
+            <div class="col-md-2">
+                <label for="type" class="form-label">Type</label>
+                <select class="form-select" id="type" name="type">
+                    <option value="">Tous</option>
+                    <option value="sale" {% if request.GET.type == 'sale' %}selected{% endif %}>Vente</option>
+                    <option value="rent" {% if request.GET.type == 'rent' %}selected{% endif %}>Location</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="make" class="form-label">Marque</label>
+                <select class="form-select" id="make" name="make">
+                    <option value="">Toutes</option>
+                    <option value="BMW" {% if request.GET.make == 'BMW' %}selected{% endif %}>BMW</option>
+                    <option value="Mercedes" {% if request.GET.make == 'Mercedes' %}selected{% endif %}>Mercedes</option>
+                    <option value="Audi" {% if request.GET.make == 'Audi' %}selected{% endif %}>Audi</option>
+                    <option value="Volkswagen" {% if request.GET.make == 'Volkswagen' %}selected{% endif %}>Volkswagen</option>
+                    <option value="Renault" {% if request.GET.make == 'Renault' %}selected{% endif %}>Renault</option>
+                    <option value="Peugeot" {% if request.GET.make == 'Peugeot' %}selected{% endif %}>Peugeot</option>
+                    <option value="Citroën" {% if request.GET.make == 'Citroën' %}selected{% endif %}>Citroën</option>
+                    <option value="Toyota" {% if request.GET.make == 'Toyota' %}selected{% endif %}>Toyota</option>
+                    <option value="Honda" {% if request.GET.make == 'Honda' %}selected{% endif %}>Honda</option>
+                    <option value="Ford" {% if request.GET.make == 'Ford' %}selected{% endif %}>Ford</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="price_min" class="form-label">Prix min</label>
+                <input type="number" class="form-control" id="price_min" name="price_min" 
+                       value="{{ request.GET.price_min }}" placeholder="Prix min">
+            </div>
+            <div class="col-md-2">
+                <label for="price_max" class="form-label">Prix max</label>
+                <input type="number" class="form-control" id="price_max" name="price_max" 
+                       value="{{ request.GET.price_max }}" placeholder="Prix max">
+            </div>
+            <div class="col-md-2">
+                <label for="city" class="form-label">Ville</label>
+                <input type="text" class="form-control" id="city" name="city" 
+                       value="{{ request.GET.city }}" placeholder="Ville">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Filtrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Info -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <p class="text-muted">
+                <i class="fas fa-info-circle"></i> 
+                {{ listings|length }} annonce{{ listings|length|pluralize:"s" }} trouvée{{ listings|length|pluralize:"s" }}
+            </p>
+        </div>
+        <div class="col-md-6 text-end">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="changeView('grid')">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="changeView('list')">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listings Grid -->
+    <div class="row g-4" id="listings-grid">
+        {% for listing in listings %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card car-card h-100">
+                {% if listing.car.cover_image %}
+                    <img src="{{ listing.car.cover_image.image.url }}" class="card-img-top car-image" alt="{{ listing.car.make }} {{ listing.car.model }}">
+                {% else %}
+                    <div class="card-img-top car-image bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-car fa-3x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                {% if listing.is_featured %}
+                    <div class="featured-badge">
+                        <i class="fas fa-star"></i> En vedette
+                    </div>
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ listing.car.make }} {{ listing.car.model }}</h5>
+                    <p class="card-text text-muted">{{ listing.car.year }} • {{ listing.car.mileage }} km</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="price-tag">
+                            {% if listing.type == 'sale' %}
+                                {{ listing.price_sale|floatformat:0 }} €
+                            {% else %}
+                                {{ listing.price_rent_daily|floatformat:0 }} €/jour
+                            {% endif %}
+                        </span>
+                        <span class="badge bg-{% if listing.type == 'sale' %}success{% else %}info{% endif %}">
+                            {{ listing.get_type_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="d-flex gap-2 mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-gas-pump"></i> {{ listing.car.get_fuel_display }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="fas fa-cog"></i> {{ listing.car.get_transmission_display }}
+                        </small>
+                    </div>
+                    
+                    <div class="d-flex gap-2 mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-building"></i> {{ listing.car.agency.name }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ listing.car.agency.city }}
+                        </small>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'listing_detail' listing.id %}" class="btn btn-primary flex-fill">
+                                <i class="fas fa-eye"></i> Voir détails
+                            </a>
+                            <a href="https://wa.me/{{ listing.car.agency.phone }}?text=Bonjour, je suis intéressé par {{ listing.car.make }} {{ listing.car.model }}" 
+                               class="btn btn-success" target="_blank" data-bs-toggle="tooltip" title="Contacter par WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        <i class="fas fa-calendar"></i> Publiée le {{ listing.created_at|date:"d/m/Y" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Aucune annonce trouvée avec ces critères.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function changeView(view) {
+    const grid = document.getElementById('listings-grid');
+    if (view === 'list') {
+        grid.classList.remove('row');
+        grid.classList.add('list-view');
+    } else {
+        grid.classList.remove('list-view');
+        grid.classList.add('row');
+    }
+}
+</script>
+
+<style>
+.list-view .col-lg-4 {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.list-view .card {
+    flex-direction: row;
+}
+
+.list-view .car-image {
+    width: 200px;
+    height: 150px;
+    border-radius: 10px 0 0 10px;
+}
+
+.list-view .card-body {
+    flex: 1;
+}
+</style>
+{% endblock %}
+
+
+

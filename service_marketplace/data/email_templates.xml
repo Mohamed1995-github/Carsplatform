@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Service Provider Welcome Email Template -->
+        <record id="email_template_service_provider_welcome" model="mail.template">
+            <field name="name">Service Provider Welcome</field>
+            <field name="model_id" ref="model_service_provider"/>
+            <field name="subject">Welcome to Service Marketplace - {{ object.name }}</field>
+            <field name="email_from">{{ (object.create_uid.email_formatted or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.user_id.email if object.user_id else object.partner_id.email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear {{ object.name }},</p>
+                    <p>Welcome to our Service Marketplace!</p>
+                    <p>Your service provider account has been successfully registered with the following details:</p>
+                    <ul>
+                        <li><strong>Reference:</strong> {{ object.ref }}</li>
+                        <li><strong>Name:</strong> {{ object.name }}</li>
+                        <li><strong>Phone:</strong> {{ object.provider_phone }}</li>
+                        <li><strong>Contract Period:</strong> {{ object.contract_start_date }} to {{ object.contract_expiry_date }}</li>
+                        <li><strong>Service Domains:</strong> {{ ', '.join(object.service_domain_ids.mapped('name')) }}</li>
+                    </ul>
+                    {% if object.user_id %}
+                    <p>You can now access your portal account using your phone number as login: <strong>{{ object.user_id.login }}</strong></p>
+                    <p>Please check your email for the portal access link.</p>
+                    {% endif %}
+                    <p>If you have any questions, please don't hesitate to contact us.</p>
+                    <p>Best regards,<br/>Service Marketplace Team</p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>
+
+

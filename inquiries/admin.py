@@ -12,7 +12,7 @@ class InquiryResponseInline(admin.TabularInline):
 class InquiryAdmin(admin.ModelAdmin):
     list_display = ['customer_name', 'subject', 'agency', 'status', 'priority', 'source', 'created_at']
     list_filter = ['status', 'priority', 'source', 'agency', 'created_at']
-    search_fields = ['customer_name', 'customer_name_ar', 'subject', 'subject_ar', 'phone', 'email', 'message']
+    search_fields = ['customer_name', 'subject', 'phone', 'email', 'message']
     readonly_fields = ['created_at', 'updated_at', 'read_at', 'replied_at']
     date_hierarchy = 'created_at'
     inlines = [InquiryResponseInline]
@@ -22,10 +22,10 @@ class InquiryAdmin(admin.ModelAdmin):
             'fields': ('listing', 'agency', 'status', 'priority', 'source')
         }),
         ('Client', {
-            'fields': ('customer_name', 'customer_name_ar', 'phone', 'email')
+            'fields': ('customer_name', 'phone', 'email')
         }),
         ('Message', {
-            'fields': ('subject', 'subject_ar', 'message', 'message_ar')
+            'fields': ('subject', 'message')
         }),
         ('Notes administrateur', {
             'fields': ('admin_notes',),
@@ -74,7 +74,7 @@ class InquiryResponseAdmin(admin.ModelAdmin):
             'fields': ('inquiry',)
         }),
         ('Réponse', {
-            'fields': ('response_text', 'response_text_ar')
+            'fields': ('response_text',)
         }),
         ('Envoi', {
             'fields': ('sent_by', 'sent_via', 'is_sent', 'sent_at', 'error_message')

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend Partner Form View -->
+    <record id="view_partner_form_service_provider" model="ir.ui.view">
+        <field name="name">res.partner.form.service.provider</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="service_provider_rank"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Service Provider" name="service_provider" attrs="{'invisible': [('service_provider_rank', '=', False)]}">
+                    <field name="service_provider_ids" readonly="1">
+                        <tree>
+                            <field name="ref"/>
+                            <field name="name"/>
+                            <field name="status" widget="badge"/>
+                            <field name="provider_phone"/>
+                            <field name="contract_start_date"/>
+                            <field name="contract_expiry_date"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend Partner Tree View -->
+    <record id="view_partner_tree_service_provider" model="ir.ui.view">
+        <field name="name">res.partner.tree.service.provider</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="service_provider_rank" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend Partner Search View -->
+    <record id="view_partner_search_service_provider" model="ir.ui.view">
+        <field name="name">res.partner.search.service.provider</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='supplier']" position="after">
+                <filter string="Service Provider" name="service_provider" domain="[('service_provider_rank', '=', True)]"/>
+            </xpath>
+            <xpath expr="//group[@name='group_by']" position="inside">
+                <filter string="Service Provider" name="group_service_provider" context="{'group_by': 'service_provider_rank'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+
+

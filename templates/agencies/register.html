@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Créer une agence - AutoPlatform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Header -->
+            <div class="text-center mb-5">
+                <h1><i class="fas fa-building"></i> Créer votre agence</h1>
+                <p class="lead text-muted">Rejoignez notre plateforme et commencez à vendre vos véhicules en ligne</p>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">
+                        <i class="fas fa-user-plus"></i> Informations de l'agence
+                    </h4>
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Agency Information -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Nom de l'agence *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">Ville *</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Adresse complète *</label>
+                            <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Téléphone *</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="whatsapp" class="form-label">WhatsApp</label>
+                                <input type="tel" class="form-control" id="whatsapp" name="whatsapp">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description de l'agence</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" 
+                                      placeholder="Décrivez votre agence, vos spécialités, vos services..."></textarea>
+                        </div>
+                        
+                        <!-- Owner Information -->
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-user"></i> Informations du propriétaire
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="owner_first_name" class="form-label">Prénom *</label>
+                                <input type="text" class="form-control" id="owner_first_name" name="owner_first_name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="owner_last_name" class="form-label">Nom *</label>
+                                <input type="text" class="form-control" id="owner_last_name" name="owner_last_name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="owner_email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="owner_email" name="owner_email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="owner_phone" class="form-label">Téléphone *</label>
+                                <input type="tel" class="form-control" id="owner_phone" name="owner_phone" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Documents -->
+                        <h5 class="mt-4 mb-3">
+                            <i class="fas fa-file-alt"></i> Documents de vérification
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="kbis_rc" class="form-label">K-bis ou RC *</label>
+                                <input type="file" class="form-control" id="kbis_rc" name="kbis_rc" accept=".pdf,.jpg,.jpeg,.png" required>
+                                <small class="text-muted">Format: PDF, JPG, PNG (max 5MB)</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_document" class="form-label">Pièce d'identité *</label>
+                                <input type="file" class="form-control" id="id_document" name="id_document" accept=".pdf,.jpg,.jpeg,.png" required>
+                                <small class="text-muted">Format: PDF, JPG, PNG (max 5MB)</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    J'accepte les <a href="#" target="_blank">conditions générales d'utilisation</a> et la 
+                                    <a href="#" target="_blank">politique de confidentialité</a> *
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+                                <label class="form-check-label" for="newsletter">
+                                    Je souhaite recevoir la newsletter et les offres spéciales
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Créer mon agence
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Information Cards -->
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                            <h5>Validation rapide</h5>
+                            <p class="text-muted">Votre demande sera traitée sous 48h maximum</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                            <h5>Augmentez vos ventes</h5>
+                            <p class="text-muted">Accédez à des milliers de clients potentiels</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-headset fa-3x text-info mb-3"></i>
+                            <h5>Support dédié</h5>
+                            <p class="text-muted">Une équipe à votre écoute pour vous accompagner</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="mt-5">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-question-circle"></i> Questions fréquentes
+                </h3>
+                
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                Combien de temps pour valider mon agence ?
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Nous traitons votre demande sous 48h maximum. Vous recevrez un email de confirmation une fois validée.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                Quels documents sont nécessaires ?
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Vous devez fournir votre K-bis ou RC (registre du commerce) et une pièce d'identité valide.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                Y a-t-il des frais d'inscription ?
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                L'inscription est gratuite. Nous prenons une commission uniquement sur les ventes réalisées.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

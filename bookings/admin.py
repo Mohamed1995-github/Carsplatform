@@ -6,7 +6,7 @@ from .models import Booking, BookingNotification
 class BookingAdmin(admin.ModelAdmin):
     list_display = ['customer_name', 'listing', 'kind', 'status', 'start_date', 'end_date', 'total_price', 'created_at']
     list_filter = ['kind', 'status', 'agency', 'created_at', 'start_date']
-    search_fields = ['customer_name', 'customer_name_ar', 'phone', 'email', 'listing__car__make', 'listing__car__model']
+    search_fields = ['customer_name', 'phone', 'email', 'listing__car__make', 'listing__car__model']
     readonly_fields = ['created_at', 'updated_at', 'confirmed_at', 'cancelled_at']
     date_hierarchy = 'created_at'
     
@@ -15,7 +15,7 @@ class BookingAdmin(admin.ModelAdmin):
             'fields': ('listing', 'agency', 'kind', 'status')
         }),
         ('Client', {
-            'fields': ('customer_name', 'customer_name_ar', 'phone', 'email')
+            'fields': ('customer_name', 'phone', 'email')
         }),
         ('Dates', {
             'fields': ('start_date', 'end_date', 'test_drive_date')
@@ -24,7 +24,7 @@ class BookingAdmin(admin.ModelAdmin):
             'fields': ('total_price', 'deposit_amount')
         }),
         ('Demandes spéciales', {
-            'fields': ('special_requests', 'special_requests_ar'),
+            'fields': ('special_requests',),
             'classes': ('collapse',)
         }),
         ('Notes administrateur', {

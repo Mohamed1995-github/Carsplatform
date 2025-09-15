@@ -24,20 +24,17 @@ class CarAdmin(admin.ModelAdmin):
     inlines = [CarImageInline, AvailabilityInline]
     
     fieldsets = (
-        ('Agence', {
-            'fields': ('agency',)
-        }),
         ('Informations de base', {
-            'fields': ('make', 'make_ar', 'model', 'model_ar', 'year', 'mileage')
+            'fields': ('agency', 'make', 'model', 'year', 'mileage')
         }),
-        ('Caractéristiques', {
+        ('Spécifications techniques', {
             'fields': ('fuel', 'transmission', 'body', 'engine_size', 'power')
         }),
         ('Apparence', {
-            'fields': ('color', 'color_ar')
+            'fields': ('color',)
         }),
         ('Options et description', {
-            'fields': ('features', 'description', 'description_ar'),
+            'fields': ('features', 'description'),
             'classes': ('collapse',)
         }),
         ('Timestamps', {
@@ -114,7 +111,7 @@ class RentalTermsAdmin(admin.ModelAdmin):
             'fields': ('deposit_required', 'min_rental_days', 'max_rental_days')
         }),
         ('Lieux', {
-            'fields': ('pickup_location', 'pickup_location_ar', 'return_location', 'return_location_ar')
+            'fields': ('pickup_location', 'return_location')
         }),
         ('Politiques', {
             'fields': ('fuel_policy', 'mileage_limit'),

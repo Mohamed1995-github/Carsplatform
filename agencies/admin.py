@@ -12,7 +12,7 @@ class AgencyAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Informations de base', {
-            'fields': ('name', 'name_ar', 'city', 'city_ar', 'address', 'address_ar')
+            'fields': ('name', 'city', 'address')
         }),
         ('Contact', {
             'fields': ('phone', 'whatsapp', 'email', 'website')
@@ -21,7 +21,7 @@ class AgencyAdmin(admin.ModelAdmin):
             'fields': ('status', 'is_verified', 'verification_date', 'kbis_rc')
         }),
         ('Description', {
-            'fields': ('description', 'description_ar'),
+            'fields': ('description',),
             'classes': ('collapse',)
         }),
         ('Timestamps', {

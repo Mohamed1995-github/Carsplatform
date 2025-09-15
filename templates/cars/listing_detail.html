@@ -1,0 +1,438 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ listing.car.make }} {{ listing.car.model }} - {{ listing.get_type_display }} - AutoPlatform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Accueil</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'listing_list' %}">Annonces</a></li>
+                    <li class="breadcrumb-item active">{{ listing.car.make }} {{ listing.car.model }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Car Images -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-body p-0">
+                    {% if listing.car.images.all %}
+                        <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-indicators">
+                                {% for image in listing.car.images.all %}
+                                <button type="button" data-bs-target="#carImageCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                                        {% if forloop.first %}class="active"{% endif %}></button>
+                                {% endfor %}
+                            </div>
+                            <div class="carousel-inner">
+                                {% for image in listing.car.images.all %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ image.image.url }}" class="d-block w-100" style="height: 400px; object-fit: cover;" 
+                                         alt="{{ listing.car.make }} {{ listing.car.model }}">
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                            <i class="fas fa-car fa-5x text-muted"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Listing Info -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h2 class="card-title mb-0">{{ listing.car.make }} {{ listing.car.model }}</h2>
+                        <span class="badge bg-{% if listing.type == 'sale' %}success{% else %}info{% endif %} fs-6">
+                            {{ listing.get_type_display }}
+                        </span>
+                    </div>
+                    
+                    <p class="text-muted mb-3">{{ listing.car.year }} • {{ listing.car.mileage }} km</p>
+                    
+                    <!-- Price Information -->
+                    <div class="mb-4">
+                        {% if listing.type == 'sale' %}
+                            <div class="text-center">
+                                <h3 class="text-success mb-2">{{ listing.price_sale|floatformat:0 }} €</h3>
+                                <small class="text-muted">Prix de vente</small>
+                            </div>
+                        {% else %}
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h5 class="text-info mb-1">{{ listing.price_rent_daily|floatformat:0 }} €</h5>
+                                    <small class="text-muted">Jour</small>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="text-info mb-1">{{ listing.price_rent_weekly|floatformat:0 }} €</h5>
+                                    <small class="text-muted">Semaine</small>
+                                </div>
+                                <div class="col-4">
+                                    <h5 class="text-info mb-1">{{ listing.price_rent_monthly|floatformat:0 }} €</h5>
+                                    <small class="text-muted">Mois</small>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Agency Info -->
+                    <div class="mb-3">
+                        <h6><i class="fas fa-building"></i> Agence</h6>
+                        <p class="mb-1">{{ listing.car.agency.name }}</p>
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ listing.car.agency.city }}
+                        </small>
+                    </div>
+                    
+                    <!-- Contact Buttons -->
+                    <div class="d-grid gap-2 mb-3">
+                        {% if listing.car.agency.phone %}
+                        <a href="tel:{{ listing.car.agency.phone }}" class="btn btn-primary">
+                            <i class="fas fa-phone"></i> Appeler l'agence
+                        </a>
+                        {% endif %}
+                        {% if listing.car.agency.whatsapp %}
+                        <a href="https://wa.me/{{ listing.car.agency.whatsapp }}?text=Bonjour, je suis intéressé par {{ listing.car.make }} {{ listing.car.model }}" 
+                           class="btn btn-success" target="_blank">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        {% if listing.type == 'rent' %}
+                        <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                            <i class="fas fa-calendar-check"></i> Réserver
+                        </a>
+                        {% else %}
+                        <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#testDriveModal">
+                            <i class="fas fa-car"></i> Demander un essai
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'contact' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope"></i> Demander plus d'infos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Car Details -->
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Specifications -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-cogs"></i> Spécifications techniques
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Marque :</strong></td>
+                                    <td>{{ listing.car.make }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Modèle :</strong></td>
+                                    <td>{{ listing.car.model }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Année :</strong></td>
+                                    <td>{{ listing.car.year }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kilométrage :</strong></td>
+                                    <td>{{ listing.car.mileage }} km</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Carburant :</strong></td>
+                                    <td>{{ listing.car.get_fuel_display }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Boîte :</strong></td>
+                                    <td>{{ listing.car.get_transmission_display }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Couleur :</strong></td>
+                                    <td>{{ listing.car.color }}</td>
+                                </tr>
+                                {% if listing.car.power %}
+                                <tr>
+                                    <td><strong>Puissance :</strong></td>
+                                    <td>{{ listing.car.power }} ch</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td><strong>Carrosserie :</strong></td>
+                                    <td>{{ listing.car.get_body_display }}</td>
+                                </tr>
+                                {% if listing.car.doors %}
+                                <tr>
+                                    <td><strong>Portes :</strong></td>
+                                    <td>{{ listing.car.doors }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if listing.car.seats %}
+                                <tr>
+                                    <td><strong>Places :</strong></td>
+                                    <td>{{ listing.car.seats }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rental Terms (if rental) -->
+            {% if listing.type == 'rent' and listing.rental_terms %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-file-contract"></i> Conditions de location
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Caution :</strong> {{ listing.rental_terms.deposit_required|floatformat:0 }} €</p>
+                            {% if listing.rental_terms.pickup_location %}
+                            <p><strong>Lieu de retrait :</strong> {{ listing.rental_terms.pickup_location }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Prix journalier :</strong> {{ listing.rental_terms.daily_rate|floatformat:0 }} €</p>
+                            <p><strong>Prix hebdomadaire :</strong> {{ listing.rental_terms.weekly_rate|floatformat:0 }} €</p>
+                            <p><strong>Prix mensuel :</strong> {{ listing.rental_terms.monthly_rate|floatformat:0 }} €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Description -->
+            {% if listing.car.description %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-info-circle"></i> Description
+                    </h4>
+                    <p class="card-text">{{ listing.car.description|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Equipment -->
+            {% if listing.car.equipment %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-list-check"></i> Équipements
+                    </h4>
+                    <p class="card-text">{{ listing.car.equipment|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Agency Details -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-building"></i> {{ listing.car.agency.name }}
+                    </h5>
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-map-marker-alt"></i> {{ listing.car.agency.address }}<br>
+                        {{ listing.car.agency.city }}
+                    </p>
+                    
+                    {% if listing.car.agency.phone %}
+                    <p class="mb-2">
+                        <i class="fas fa-phone"></i> 
+                        <a href="tel:{{ listing.car.agency.phone }}">{{ listing.car.agency.phone }}</a>
+                    </p>
+                    {% endif %}
+                    
+                    {% if listing.car.agency.whatsapp %}
+                    <p class="mb-3">
+                        <i class="fab fa-whatsapp"></i> 
+                        <a href="https://wa.me/{{ listing.car.agency.whatsapp }}" target="_blank">{{ listing.car.agency.whatsapp }}</a>
+                    </p>
+                    {% endif %}
+                    
+                    <a href="{% url 'agency_detail' listing.car.agency.id %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye"></i> Voir l'agence
+                    </a>
+                </div>
+            </div>
+
+            <!-- Similar Listings -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-tags"></i> Annonces similaires
+                    </h5>
+                    {% for similar_listing in listing.car.agency.listings.all|slice:":3" %}
+                        {% if similar_listing != listing %}
+                        <div class="d-flex align-items-center mb-3">
+                            {% if similar_listing.car.cover_image %}
+                                <img src="{{ similar_listing.car.cover_image.image.url }}" class="rounded me-3" 
+                                     style="width: 60px; height: 40px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" 
+                                     style="width: 60px; height: 40px;">
+                                    <i class="fas fa-car text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">{{ similar_listing.car.make }} {{ similar_listing.car.model }}</h6>
+                                <small class="text-muted">
+                                    {% if similar_listing.type == 'sale' %}
+                                        {{ similar_listing.price_sale|floatformat:0 }} €
+                                    {% else %}
+                                        {{ similar_listing.price_rent_daily|floatformat:0 }} €/jour
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <a href="{% url 'listing_detail' similar_listing.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                    <p class="text-muted">Aucune annonce similaire</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Modal -->
+{% if listing.type == 'rent' %}
+<div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Réserver {{ listing.car.make }} {{ listing.car.model }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="start_date" class="form-label">Date de début *</label>
+                            <input type="date" class="form-control" id="start_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="end_date" class="form-label">Date de fin *</label>
+                            <input type="date" class="form-control" id="end_date" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="customer_name" class="form-label">Nom complet *</label>
+                            <input type="text" class="form-control" id="customer_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="customer_phone" class="form-label">Téléphone *</label>
+                            <input type="tel" class="form-control" id="customer_phone" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer_email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="customer_email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="special_requests" class="form-label">Demandes spéciales</label>
+                        <textarea class="form-control" id="special_requests" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary">Confirmer la réservation</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Test Drive Modal -->
+{% if listing.type == 'sale' %}
+<div class="modal fade" id="testDriveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Demander un essai - {{ listing.car.make }} {{ listing.car.model }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="test_drive_date" class="form-label">Date souhaitée *</label>
+                            <input type="date" class="form-control" id="test_drive_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="test_drive_time" class="form-label">Heure souhaitée *</label>
+                            <input type="time" class="form-control" id="test_drive_time" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="test_customer_name" class="form-label">Nom complet *</label>
+                            <input type="text" class="form-control" id="test_customer_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="test_customer_phone" class="form-label">Téléphone *</label>
+                            <input type="tel" class="form-control" id="test_customer_phone" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="test_customer_email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="test_customer_email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="test_message" class="form-label">Message</label>
+                        <textarea class="form-control" id="test_message" rows="3" 
+                                  placeholder="Informations supplémentaires..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary">Demander l'essai</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+
+

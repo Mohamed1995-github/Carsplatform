@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ agency.name }} - AutoPlatform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Agency Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                                 style="width: 100px; height: 100px;">
+                                <i class="fas fa-building fa-3x"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h1 class="mb-2">{{ agency.name }}</h1>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-map-marker-alt"></i> {{ agency.city }}, {{ agency.address }}
+                            </p>
+                            <div class="d-flex gap-3">
+                                {% if agency.phone %}
+                                <a href="tel:{{ agency.phone }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-phone"></i> {{ agency.phone }}
+                                </a>
+                                {% endif %}
+                                {% if agency.whatsapp %}
+                                <a href="https://wa.me/{{ agency.whatsapp }}" class="btn btn-outline-success" target="_blank">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <div class="badge bg-success fs-6 mb-2">
+                                <i class="fas fa-check-circle"></i> Agence vérifiée
+                            </div>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-car"></i> {{ agency.cars.count }} voiture{{ agency.cars.count|pluralize:"s" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agency Description -->
+    {% if agency.description %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-info-circle"></i> À propos de {{ agency.name }}
+                    </h5>
+                    <p class="card-text">{{ agency.description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Agency Cars -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-car"></i> Voitures de {{ agency.name }}
+            </h3>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for car in agency.cars.all %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card car-card h-100">
+                {% if car.cover_image %}
+                    <img src="{{ car.cover_image.image.url }}" class="card-img-top car-image" alt="{{ car.make }} {{ car.model }}">
+                {% else %}
+                    <div class="card-img-top car-image bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-car fa-3x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
+                    <p class="card-text text-muted">{{ car.year }} • {{ car.mileage }} km</p>
+                    
+                    <div class="d-flex gap-2 mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-gas-pump"></i> {{ car.get_fuel_display }}
+                        </small>
+                        <small class="text-muted">
+                            <i class="fas fa-cog"></i> {{ car.get_transmission_display }}
+                        </small>
+                    </div>
+                    
+                    <div class="d-flex gap-2 mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-palette"></i> {{ car.color }}
+                        </small>
+                        {% if car.power %}
+                        <small class="text-muted">
+                            <i class="fas fa-tachometer-alt"></i> {{ car.power }} ch
+                        </small>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'car_detail' car.id %}" class="btn btn-primary flex-fill">
+                                <i class="fas fa-eye"></i> Voir détails
+                            </a>
+                            <a href="https://wa.me/{{ agency.phone }}?text=Bonjour, je suis intéressé par {{ car.make }} {{ car.model }}" 
+                               class="btn btn-success" target="_blank" data-bs-toggle="tooltip" title="Contacter par WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Aucune voiture disponible pour le moment.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Contact Information -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-address-book"></i> Informations de contact
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Adresse :</strong><br>
+                            {{ agency.address }}<br>
+                            {{ agency.city }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if agency.phone %}
+                            <p><strong>Téléphone :</strong><br>
+                            <a href="tel:{{ agency.phone }}">{{ agency.phone }}</a></p>
+                            {% endif %}
+                            {% if agency.whatsapp %}
+                            <p><strong>WhatsApp :</strong><br>
+                            <a href="https://wa.me/{{ agency.whatsapp }}" target="_blank">{{ agency.whatsapp }}</a></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
