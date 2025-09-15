@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Agency, AgencyUser
+import re
+from urllib.parse import quote
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,14 +25,31 @@ class AgencyUserSerializer(serializers.ModelSerializer):
 
 class AgencySerializer(serializers.ModelSerializer):
     users = AgencyUserSerializer(many=True, read_only=True)
+    whatsapp_link = serializers.SerializerMethodField()
     
     class Meta:
         model = Agency
         fields = [
-            'id', 'name', 'city', 'address', 'phone', 'whatsapp', 'email', 'website', 
+            'id', 'name', 'city', 'address', 'phone', 'whatsapp', 'whatsapp_link', 'email', 'website', 
             'description', 'status', 'is_verified', 'verification_date', 'users', 'created_at'
         ]
         read_only_fields = ['status', 'is_verified', 'verification_date', 'created_at']
+
+    def get_whatsapp_link(self, agency: Agency) -> str | None:
+        """Return a wa.me link with a prefilled French message if whatsapp is set."""
+        if not agency.whatsapp:
+            return None
+
+        # Build E.164-like digits-only string for wa.me (no plus sign)
+        digits_only = re.sub(r"\D", "", agency.whatsapp)
+        if not digits_only:
+            return None
+
+        default_message = (
+            f"Bonjour {agency.name}, je souhaite vous contacter via AutoPlatform."
+        )
+        encoded_message = quote(default_message, safe="")
+        return f"https://wa.me/{digits_only}?text={encoded_message}"
 
 
 class AgencyRegistrationSerializer(serializers.ModelSerializer):

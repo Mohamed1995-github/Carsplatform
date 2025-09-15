@@ -2,6 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.utils import timezone
 from .models import Agency, AgencyUser
@@ -104,3 +105,24 @@ def agency_stats(request, pk):
     }
     
     return Response(stats)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def agency_whatsapp_redirect(request, pk):
+    """Redirect to the agency WhatsApp wa.me link with prefilled message."""
+    agency = get_object_or_404(Agency, pk=pk)
+    # Build link similarly to serializer method to keep behavior consistent
+    from urllib.parse import quote
+    import re
+
+    if not agency.whatsapp:
+        return Response({"detail": "WhatsApp non disponible pour cette agence."}, status=status.HTTP_404_NOT_FOUND)
+
+    digits_only = re.sub(r"\D", "", agency.whatsapp)
+    if not digits_only:
+        return Response({"detail": "Numéro WhatsApp invalide."}, status=status.HTTP_400_BAD_REQUEST)
+
+    message = f"Bonjour {agency.name}, je souhaite vous contacter via AutoPlatform."
+    url = f"https://wa.me/{digits_only}?text={quote(message, safe='')}"
+    return HttpResponseRedirect(url)
