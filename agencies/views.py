@@ -105,8 +105,6 @@ def agency_stats(request, pk):
     }
     
     return Response(stats)
-<<<<<<< Current (Your changes)
-=======
 
 
 @api_view(['GET'])
@@ -128,4 +126,3 @@ def agency_whatsapp_redirect(request, pk):
     message = f"Bonjour {agency.name}, je souhaite vous contacter via AutoPlatform."
     url = f"https://wa.me/{digits_only}?text={quote(message, safe='')}"
     return HttpResponseRedirect(url)
->>>>>>> Incoming (Background Agent changes)
