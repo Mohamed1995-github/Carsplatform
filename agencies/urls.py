@@ -9,9 +9,6 @@ urlpatterns = [
     path('agencies/register/', views.AgencyRegistrationView.as_view(), name='agency-register'),
     path('agencies/<int:pk>/verify/', views.AgencyVerificationView.as_view(), name='agency-verify'),
     path('agencies/<int:pk>/users/', views.AgencyUsersView.as_view(), name='agency-users'),
-<<<<<<< Current (Your changes)
-=======
     path('agencies/<int:pk>/contact/whatsapp/', views.agency_whatsapp_redirect, name='agency-whatsapp'),
->>>>>>> Incoming (Background Agent changes)
 ]
 
